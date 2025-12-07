@@ -2,8 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Abhilash Christopher | Security Engineer</title>
+  <title>Abhilash Christopher | HECKER</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- FAVICON: put a file named favicon.ico in the same folder as this HTML -->
+  <link rel="icon" href="favicon.ico" />
+
   <style>
     :root {
       --bg: #050608;
@@ -12,11 +16,10 @@
       --muted: #8b949e;
       --link: #58a6ff;
       --border: #22252a;
+      --neon: rgba(22, 255, 96, 0.6);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -29,7 +32,7 @@
       min-height: 100vh;
     }
 
-    /* === MATRIX BACKGROUND CANVAS === */
+    /* MATRIX BACKGROUND */
     #matrix-bg {
       position: fixed;
       inset: 0;
@@ -40,7 +43,6 @@
       background: radial-gradient(circle at top, #10131a 0, #020305 55%);
     }
 
-    /* Optional subtle scanline overlay */
     .scanlines {
       pointer-events: none;
       position: fixed;
@@ -50,7 +52,7 @@
       opacity: 0.15;
       background-image: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 0.15) 1px,
+        rgba(255, 255, 255, 0.18) 1px,
         rgba(0, 0, 0, 0) 1px
       );
       background-size: 100% 3px;
@@ -58,16 +60,16 @@
 
     .terminal-wrapper {
       position: relative;
-      z-index: 2; /* Above canvas + scanlines */
+      z-index: 2;
     }
 
     .terminal {
       max-width: 960px;
       margin: 40px auto 80px;
-      background: rgba(5, 6, 8, 0.96);
+      background: rgba(5, 6, 8, 0.95);
       border-radius: 12px;
       border: 1px solid var(--border);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
       overflow: hidden;
       backdrop-filter: blur(4px);
     }
@@ -84,20 +86,15 @@
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
+      width: 10px; height: 10px;
       border-radius: 50%;
       display: inline-block;
     }
-
     .dot.red { background: #ff5f57; }
     .dot.yellow { background: #febc2e; }
     .dot.green { background: #28c840; }
 
-    .terminal-title {
-      margin-left: 8px;
-      opacity: 0.8;
-    }
+    .terminal-title { opacity: 0.8; }
 
     .terminal-body {
       padding: 22px 18px 28px;
@@ -105,46 +102,89 @@
       white-space: pre-wrap;
     }
 
+    /* ASCII LOGO + GLITCH EFFECT */
     .ascii-art {
-      font-size: 11px;
+      font-size: 12px;
       line-height: 1.1;
       color: var(--accent);
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       white-space: pre;
+      display: block;
+      text-align: left;
       overflow-x: auto;
     }
 
-    .prompt {
-      color: var(--accent);
+    .glitch {
+      position: relative;
+      animation: glitch 2.3s infinite;
     }
 
-    .meta {
-      color: var(--muted);
-      font-size: 13px;
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      white-space: pre;
+      overflow: hidden;
+      pointer-events: none;
+      mix-blend-mode: screen;
     }
+
+    .glitch::before {
+      text-shadow: -2px 0 #ff00c1;
+      clip-path: polygon(0 0, 100% 0, 100% 40%, 0 45%);
+      animation: glitchTop 2.3s infinite;
+    }
+
+    .glitch::after {
+      text-shadow: 2px 0 #00fff9;
+      clip-path: polygon(0 55%, 100% 60%, 100% 100%, 0 100%);
+      animation: glitchBottom 2.3s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: none; }
+      12% { transform: translate(1px, -1px); }
+      15% { transform: translate(-2px, 1px); }
+      18% { transform: translate(1px, 0); }
+      20% { transform: none; }
+      100% { transform: none; }
+    }
+
+    @keyframes glitchTop {
+      0% { transform: translate(0, 0); }
+      12% { transform: translate(-2px, -1px); }
+      18% { transform: translate(2px, 1px); }
+      22% { transform: translate(0, 0); }
+      100% { transform: translate(0, 0); }
+    }
+
+    @keyframes glitchBottom {
+      0% { transform: translate(0, 0); }
+      12% { transform: translate(2px, 1px); }
+      18% { transform: translate(-2px, -1px); }
+      22% { transform: translate(0, 0); }
+      100% { transform: translate(0, 0); }
+    }
+
+    .prompt { color: var(--accent); }
+    .meta { color: var(--muted); font-size: 13px; }
 
     a {
       color: var(--link);
       text-decoration: none;
+      transition: box-shadow 0.2s ease, text-shadow 0.2s ease, color 0.2s ease;
     }
-
     a:hover {
-      text-decoration: underline;
+      color: #9fd1ff;
+      text-shadow: 0 0 6px rgba(88, 166, 255, 0.75);
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
     }
 
-    .section {
-      margin-top: 24px;
-    }
-
-    .section-title {
-      color: var(--accent);
-      font-weight: bold;
-    }
-
-    .bullet {
-      display: block;
-      padding-left: 2ch;
-    }
+    .section { margin-top: 24px; }
+    .section-title { color: var(--accent); font-weight: bold; }
+    .bullet { display: block; padding-left: 2ch; }
 
     .tag {
       display: inline-block;
@@ -154,12 +194,16 @@
       margin: 2px 4px 2px 0;
       font-size: 11px;
       color: var(--muted);
+      transition: box-shadow 0.2s ease, transform 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .tag:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--neon);
+      transform: translateY(-1px);
     }
 
-    .divider {
-      border-top: 1px solid var(--border);
-      margin: 18px 0;
-    }
+    .divider { border-top: 1px solid var(--border); margin: 18px 0; }
 
     .blink {
       display: inline-block;
@@ -168,49 +212,71 @@
       margin-left: 2px;
       animation: blink 1s steps(2, start) infinite;
     }
+    @keyframes blink { to { opacity: 0; } }
 
-    @keyframes blink {
-      to { opacity: 0; }
+    /* COMMAND BAR (click-to-run) */
+    .command-bar {
+      margin: 10px 0 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .cmd-link {
+      display: inline-block;
+      margin-right: 8px;
+      padding: 1px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .cmd-link:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--neon);
+      transform: translateY(-1px);
     }
 
     @media (max-width: 600px) {
-      .terminal {
-        margin: 16px 8px 40px;
-      }
-      .terminal-body {
-        padding: 18px 12px 22px;
-      }
+      .terminal { margin: 16px 8px 40px; }
+      .terminal-body { padding: 18px 12px 22px; }
     }
   </style>
 </head>
 <body>
-  <!-- Animated Matrix Background -->
+
+  <!-- MATRIX BACKGROUND -->
   <canvas id="matrix-bg"></canvas>
   <div class="scanlines"></div>
 
-  <!-- Terminal Content -->
   <div class="terminal-wrapper">
     <div class="terminal">
       <div class="terminal-header">
         <span class="dot red"></span>
         <span class="dot yellow"></span>
         <span class="dot green"></span>
-        <span class="terminal-title">root@abhilash: ~/portfolio</span>
+        <span class="terminal-title">root@hecker: ~/portfolio</span>
       </div>
 
       <div class="terminal-body">
-<div class="ascii-art">
-██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ 
+
+<!-- GLITCH HECKER LOGO -->
+<div
+  class="ascii-art glitch"
+  data-text="██║  ██║███████╗ ██████╗██║  ██║███████╗██████╗ 
+██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗
+███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝
+██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗
+██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║
+╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝">
+██║  ██║███████╗ ██████╗██║  ██║███████╗██████╗ 
 ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗
 ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝
 ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗
 ██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-
 </div>
 
-
-root@abhilash:~# whoami
+root@hecker:~# whoami
 ABHILASH CHRISTOPHER
 SECURITY ENGINEER | RED TEAMER (ASPIRING)
 
@@ -221,137 +287,34 @@ GitHub: <a href="https://github.com/your-github" target="_blank">@your-github</a
 Location: India
 </span>
 
-<div class="section">
-  <span class="prompt">root@abhilash:~# cat summary.txt</span>
-
-  I break things so they get rebuilt stronger.
-  Security enthusiast focusing on web apps, APIs, and Active Directory.
-  Currently grinding OSCP and sharpening red teaming skills with hands-on labs.
+<div class="command-bar">
+<span class="meta">Available commands:</span>
+<span class="cmd-link" data-target="#history">history</span>
+<span class="cmd-link" data-target="#skills">skills</span>
+<span class="cmd-link" data-target="#contact">contact</span>
 </div>
 
-<div class="section">
-  <span class="prompt">root@abhilash:~/logs# ./show_history.sh</span>
+<div class="section" id="summary">
+<span class="prompt">root@hecker:~# cat summary.txt</span>
 
-  <span class="section-title">[CURRENT] SECURITY ROLE @ YOUR COMPANY</span>
-  <span class="meta">City, Country | Month YYYY – Present</span>
-  <span class="bullet">- Performed web / API tests (IDOR, SSRF, RCE, auth issues).</span>
-  <span class="bullet">- Built repeatable checklists for OSCP-style enumeration.</span>
-  <span class="bullet">- Worked closely with dev/ops teams to get vulns fixed.</span>
-
-  <div class="divider"></div>
-
-  <span class="section-title">[PREV] SOMETHING YOU DID BEFORE</span>
-  <span class="meta">Company | Month YYYY – Month YYYY</span>
-  <span class="bullet">- Add 3–4 strong bullet points about impact.</span>
-  <span class="bullet">- Focus on security, scripting, automation, or infra.</span>
+I break things so they get rebuilt stronger.
+Security enthusiast focusing on web apps, APIs, and Active Directory.
+Currently grinding OSCP and sharpening red teaming skills with hands-on labs.
 </div>
 
-<div class="section">
-  <span class="prompt">root@abhilash:~/arsenal# ls -la --modules</span>
+<div class="section" id="history">
+<span class="prompt">root@hecker:~/logs# ./show_history.sh</span>
 
-  <span class="section-title">&gt; AD EXPLOITATION</span>
-  <span class="tag">Kerberoasting</span>
-  <span class="tag">AS-REP Roasting</span>
-  <span class="tag">Pass-the-Hash/Ticket</span>
-  <span class="tag">DCSync</span>
+<span class="section-title">[CURRENT] SECURITY ROLE @ YOUR COMPANY</span>
+<span class="meta">City, Country | Month YYYY – Present</span>
+<span class="bullet">- Performed web / API tests (IDOR, SSRF, RCE, auth issues).</span>
+<span class="bullet">- Built repeatable checklists for OSCP-style enumeration.</span>
+<span class="bullet">- Worked closely with dev/ops teams to get vulns fixed.</span>
 
-  <span class="section-title">&gt; OFFENSIVE TOOLING</span>
-  <span class="tag">Mimikatz</span>
-  <span class="tag">BloodHound</span>
-  <span class="tag">CrackMapExec</span>
-  <span class="tag">Impacket</span>
-  <span class="tag">Burp Suite</span>
+<div class="divider"></div>
 
-  <span class="section-title">&gt; SCRIPTING &amp; AUTOMATION</span>
-  <span class="tag">Python</span>
-  <span class="tag">PowerShell</span>
-  <span class="tag">Bash</span>
-
-  <span class="section-title">&gt; CORE SECURITY</span>
-  <span class="tag">Web App Pentest</span>
-  <span class="tag">API Security</span>
-  <span class="tag">Linux/Windows Internals</span>
-</div>
-
-<div class="section">
-  <span class="prompt">root@abhilash:~/credentials# cat certs.db</span>
-
-  ★ OSCP (in progress)  
-  ★ Any other cert you have (e.g., CEH, eJPT, etc.)
-
-  <div class="divider"></div>
-
-  <span class="prompt">root@abhilash:~/credentials# cat education.db</span>
-
-  - Bachelor’s in &lt;Your Degree&gt; – &lt;Your University&gt; (Year)
-</div>
-
-<div class="section">
-  <span class="prompt">root@abhilash:~# system_status --check</span>
-
-  System Status: ONLINE
-  Focus Mode: OSCP LABS
-  Health: Work in progress, but improving daily.
-
-  root@abhilash:~# <span class="blink"></span>
-</div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- MATRIX RAIN SCRIPT -->
-  <script>
-    (function () {
-      const canvas = document.getElementById("matrix-bg");
-      const ctx = canvas.getContext("2d");
-
-      const characters = "アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      const fontSize = 16;
-      let columns;
-      let drops;
-
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        columns = Math.floor(canvas.width / fontSize);
-        drops = Array(columns).fill(0);
-      }
-
-      function draw() {
-        // fade the canvas slightly to create trailing effect
-        ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "#16ff60";
-        ctx.font = fontSize + "px monospace";
-
-        for (let i = 0; i < columns; i++) {
-          const char = characters.charAt(
-            Math.floor(Math.random() * characters.length)
-          );
-          const x = i * fontSize;
-          const y = drops[i] * fontSize;
-
-          ctx.fillText(char, x, y);
-
-          if (y > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-          } else {
-            drops[i]++;
-          }
-        }
-
-        requestAnimationFrame(draw);
-      }
-
-      window.addEventListener("resize", resizeCanvas);
-
-      resizeCanvas();
-      draw();
-    })();
-  </script>
-</body>
-</html>
-
+<span class="section-title">[PREV] SOMETHING YOU DID BEFORE</span>
+<span class="meta">Company | Month YYYY – Month YYYY</span>
+<span class="bullet">- Add 3–4 strong bullet points about impact.</span>
+<sp
 
