@@ -1,330 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Abhilash Christopher | HECKER</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abhilash Christopher | Cyber Security Expert</title>
+    <style>
+        /* --- CORE SYSTEM AESTHETICS --- */
+        :root {
+            --bg-color: #05020a;
+            --terminal-bg: rgba(15, 5, 24, 0.9); /* Made semi-transparent */
+            --text-color: #e0d0ff;
+            --primary-glow: #bd00ff; /* Neon Purple */
+            --secondary-glow: #7000ff; /* Deep Violet */
+            --accent: #00f3ff; /* Cyan for contrast */
+            --glass: rgba(18, 4, 31, 0.85);
+            --font-main: 'Courier New', Courier, monospace;
+        }
 
-  <!-- Optional favicon: put favicon.ico in same folder -->
-  <link rel="icon" href="favicon.ico" />
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            /* Removed static image to let the Matrix rain show */
+        }
 
-  <style>
-    :root {
-      --bg: #050608;
-      --fg: #e5e5e5;
-      --accent: #16ff60;
-      --muted: #8b949e;
-      --border: #22252a;
-      --link: #58a6ff;
-    }
+        /* --- MATRIX CANVAS --- */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Puts it behind everything */
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary-glow); border-radius: 5px; }
 
-    body {
-      margin: 0;
-      padding: 0;
-      background: #000;
-      color: var(--fg);
-      font-family: "Fira Code", "Source Code Pro", Consolas, monospace;
-      font-size: 14px;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
 
-    /* MATRIX BACKGROUND (subtle) */
-    #matrix-bg {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      display: block;
-      background: radial-gradient(circle at top, #10131a 0, #020305 55%);
-    }
+        /* --- HEADER / ASCII --- */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            animation: fadeIn 2s ease-in;
+        }
 
-    .scanlines {
-      pointer-events: none;
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      mix-blend-mode: soft-light;
-      opacity: 0.1;
-      background-image: linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.18) 1px,
-        rgba(0, 0, 0, 0) 1px
-      );
-      background-size: 100% 3px;
-    }
+        .glitch-text {
+            font-size: 2.5rem;
+            text-shadow: 
+                0 0 5px var(--primary-glow),
+                0 0 10px var(--primary-glow),
+                0 0 20px var(--secondary-glow);
+            color: #fff;
+            margin-bottom: 10px;
+        }
 
-    .terminal-wrapper {
-      position: relative;
-      z-index: 2;
-    }
+        .subtitle {
+            color: var(--accent);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+        }
 
-    .terminal {
-      max-width: 900px;
-      margin: 40px auto 80px;
-      background: #050608;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
-      overflow: hidden;
-    }
+        .contact-info a {
+            color: var(--text-color);
+            text-decoration: none;
+            margin: 0 10px;
+            border-bottom: 1px dashed var(--secondary-glow);
+            transition: 0.3s;
+        }
+        .contact-info a:hover { color: var(--primary-glow); text-shadow: 0 0 8px var(--primary-glow); }
 
-    .terminal-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      background: #050608;
-      font-size: 12px;
-      color: var(--muted);
-    }
+        /* --- TERMINAL WINDOWS --- */
+        .terminal-window {
+            background: var(--terminal-bg);
+            border: 1px solid var(--secondary-glow);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(112, 0, 255, 0.15);
+            backdrop-filter: blur(3px); /* Blurs the rain behind the text */
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
 
-    .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-    }
+        .terminal-window:hover {
+            box-shadow: 0 0 25px rgba(189, 0, 255, 0.3);
+            border-color: var(--primary-glow);
+        }
 
-    .dot.red { background: #ff5f57; }
-    .dot.yellow { background: #febc2e; }
-    .dot.green { background: #28c840; }
+        .window-bar {
+            background: linear-gradient(90deg, #1a0b2e, #2d1b4e);
+            padding: 8px 15px;
+            border-bottom: 1px solid var(--secondary-glow);
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #bfa5ff;
+        }
 
-    .terminal-title {
-      margin-left: 6px;
-      opacity: 0.8;
-    }
+        .dots span {
+            height: 10px; width: 10px;
+            background-color: #ff5f56; border-radius: 50%;
+            display: inline-block; margin-right: 5px;
+        }
+        .dots span:nth-child(2) { background-color: #ffbd2e; }
+        .dots span:nth-child(3) { background-color: #27c93f; }
 
-    .terminal-body {
-      padding: 20px 18px 26px;
-      white-space: pre-wrap;
-      line-height: 1.45;
-    }
+        .content {
+            padding: 20px;
+            line-height: 1.6;
+        }
 
-    .ascii-art {
-      font-size: 11px;
-      line-height: 1.1;
-      color: var(--accent);
-      margin-bottom: 10px;
-      white-space: pre;
-      overflow-x: auto;
-    }
+        /* --- TYPOGRAPHY & COMMANDS --- */
+        .prompt { color: var(--accent); font-weight: bold; margin-right: 10px; }
+        .command { color: var(--primary-glow); }
+        h2 { color: var(--primary-glow); margin-top: 0; border-bottom: 1px solid var(--secondary-glow); padding-bottom: 10px; }
+        
+        .highlight { color: #fff; font-weight: bold; }
 
-    .prompt {
-      color: var(--accent);
-    }
+        /* --- SKILLS GRID --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .skill-card {
+            border: 1px solid rgba(189, 0, 255, 0.3);
+            background: rgba(189, 0, 255, 0.05);
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        .skill-card:hover { background: rgba(189, 0, 255, 0.1); }
 
-    .meta {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    a {
-      color: var(--link);
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .section {
-      margin-top: 18px;
-    }
-
-    .section-title {
-      font-weight: 600;
-    }
-
-    .divider {
-      margin: 16px 0;
-      border-top: 1px solid var(--border);
-    }
-
-    .blink {
-      display: inline-block;
-      width: 7px;
-      height: 1em;
-      background: var(--accent);
-      margin-left: 2px;
-      animation: blink 1s steps(2, start) infinite;
-      vertical-align: text-bottom;
-    }
-
-    @keyframes blink {
-      to { opacity: 0; }
-    }
-
-    @media (max-width: 600px) {
-      .terminal {
-        margin: 16px 8px 40px;
-      }
-      .terminal-body {
-        padding: 16px 10px 22px;
-      }
-    }
-  </style>
+        /* --- LISTS --- */
+        ul { list-style-type: none; padding-left: 0; }
+        li::before {
+            content: ">> ";
+            color: var(--primary-glow);
+        }
+        
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background: var(--primary-glow);
+            animation: blink 1s infinite;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Background animation -->
-  <canvas id="matrix-bg"></canvas>
-  <div class="scanlines"></div>
+<canvas id="matrix-canvas"></canvas>
 
-  <div class="terminal-wrapper">
-    <div class="terminal">
-      <div class="terminal-header">
-        <span class="dot red"></span>
-        <span class="dot yellow"></span>
-        <span class="dot green"></span>
-        <span class="terminal-title">root@hecker: ~/mission_objective</span>
-      </div>
-
-      <div class="terminal-body">
-<div class="ascii-art">
-██║  ██║███████╗ ██████╗██║  ██║███████╗██████╗ 
+<div class="container">
+    <header>
+        <pre style="font-size: 8px; color: var(--primary-glow); line-height: 8px; margin-bottom: 20px;">
+ ██╗  ██╗███████╗ ██████╗██╗  ██╗███████╗██████╗ 
 ██║  ██║██╔════╝██╔════╝██║ ██╔╝██╔════╝██╔══██╗
 ███████║█████╗  ██║     █████╔╝ █████╗  ██████╔╝
 ██╔══██║██╔══╝  ██║     ██╔═██╗ ██╔══╝  ██╔══██╗
 ██║  ██║███████╗╚██████╗██║  ██╗███████╗██║  ██║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
-</div>
-# ABHILASH CHRISTOPHER
 
-SECURITY ENGINEER | RED TEAMER (ASPIRING)
+        </pre>
+        
+        <h1 class="glitch-text">AAYUSH KANANI</h1>
+        <div class="subtitle">SENIOR SECURITY ENGINEER | RED TEAMER</div>
+        
+        <div class="contact-info" style="margin-top: 20px;">
+            <a href="mailto:abhilashchris63@gmail.com">Email</a>
+            <a href="#">LinkedIn</a> <a href="#">GitHub</a>   <span style="color: var(--accent)">Bengaluru, India</span>
+        </div>
+    </header>
 
-Email     LinkedIn     GitHub     India
-
-
-root@hecker:~# cat summary.txt
-
-Experienced offensive security enthusiast with a focus on web apps, APIs, and Active Directory.
-Hands-on with CTFs and OSCP-style labs, simulating real-world attack chains, pivoting, and privilege escalation.
-Constantly learning, breaking, and hardening systems to build practical red-teaming skills.
-
-
-root@hecker:~/logs/experience
-
-root@hecker:~/logs# ./show_history.sh
-
-### [CURRENT] SECURITY ROLE @ YOUR COMPANY
-
-Location | Month YYYY - Present
-  * Perform web and API security assessments (IDOR, SSRF, RCE, auth bypass).
-  * Build repeatable checklists and scripts for OSCP-style enumeration and exploitation.
-  * Collaborate with developers / ops teams to prioritize and remediate vulnerabilities.
-
-* * *
-
-### [PREV] PREVIOUS ROLE @ PREVIOUS COMPANY
-
-Location | Month YYYY - Month YYYY
-  * Conducted vulnerability assessments for internal and client-facing applications.
-  * Automated routine recon / enumeration steps with Python, Bash and PowerShell.
-  * Documented attack paths, PoCs, and remediation guidance for stakeholders.
-
-
-root@hecker:~/arsenal
-
-root@hecker:~/arsenal# ls -la --modules
-
-> AD EXPLOITATION
-  Kerberoasting, AS-REP Roasting, Pass-the-Hash, Pass-the-Ticket, DCSync.
-
-> OFFENSIVE TOOLING
-  Mimikatz, BloodHound, CrackMapExec, Impacket, Sysinternals.
-
-> WEB & API SECURITY
-  Burp Suite, SQLMap, OWASP Top 10, OWASP API Top 10.
-
-> SCRIPTING & AUTOMATION
-  Python, PowerShell, Bash.
-
-> PLATFORMS
-  Windows (AD), Linux servers, Web stacks (LAMP / MERN basics).
-
-
-root@hecker:~/credentials
-
-root@hecker:~/credentials# cat certs.db
-
-  ★ OSCP (in progress)
-  ★ Other certifications / trainings (add yours here)
-
-
-root@hecker:~/credentials# cat education.db
-
-  * Bachelor's in &lt;Your Degree&gt; – &lt;Your University&gt; (Year)
-
-
-root@hecker:~/contact
-
-root@hecker:~/contact# cat contact.txt
-
-  Email:    you@example.com
-  LinkedIn: https://linkedin.com/in/your-handle
-  GitHub:   https://github.com/your-github
-
-
-root@hecker:~# system_status --check
-
-  System Status: ONLINE
-  Focus Mode:   OSCP LABS / RED TEAMING
-  Health:       Improving one commit at a time.
-
-root@hecker:~# <span class="blink"></span>
-      </div>
+    <div class="terminal-window">
+        <div class="window-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <span style="margin-left: 15px;">root@abhilash:~/mission_objective</span>
+        </div>
+        <div class="content">
+            <p>
+                <span class="prompt">root@abhilash:~#</span> 
+                <span class="command">cat summary.txt</span>
+            </p>
+            <p>
+                Experienced cybersecurity expert specializing in proactive defense measures against diverse cyber threats. 
+                Highly skilled in <span class="highlight">penetration testing</span> and <span class="highlight">red teaming</span>, 
+                with a proven track record of identifying vulnerabilities, designing complex attack scenarios, and developing robust security strategies.
+                Committed to continuous professional development to secure sensitive data and systems.
+            </p>
+        </div>
     </div>
-  </div>
+
+    <div class="terminal-window">
+        <div class="window-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <span style="margin-left: 15px;">root@abhilash:~/logs/experience</span>
+        </div>
+        <div class="content">
+            <p><span class="prompt">root@aayush:~/logs#</span> <span class="command">./show_history.sh</span></p>
+
+            <h3 style="color: var(--accent);">[CURRENT] SENIOR SECURITY ENGINEER @ ACCENTURE</h3>
+            <div style="font-size: 0.85rem; color: #888; margin-bottom: 10px;">Bengaluru, India | Sep 2024 - Present</div>
+            <ul>
+                <li>Led end-to-end security architecture reviews across <span class="highlight">40+ enterprise applications</span>, reducing critical vulnerabilities by 72%.</li>
+                <li>Conducted API security assessments for BFSI clients, identifying 65+ high-severity vulnerabilities (IDOR, SSRF, Auth Bypass).</li>
+                <li>Performed advanced Android application security evaluations leveraging OWASP Top 10.</li>
+                <li>Delivered actionable remediation guidance resulting in a 92% remediation success rate.</li>
+            </ul>
+
+            <hr style="border: 0; border-bottom: 1px dashed var(--secondary-glow); margin: 20px 0;">
+
+            <h3 style="color: var(--accent);">[PREV] Amazon Development Center </h3>
+            <div style="font-size: 0.85rem; color: #888; margin-bottom: 10px;">Hyderabad, India | June 2023 - July 2025</div>
+            <ul>
+                <li>Performed hands-on security testing for client web portals and REST APIs using Burp Suite and Postman.</li>
+                <li>Conducted structured endpoint mapping using tools like Gobuster/Dirbuster to uncover hidden routes.</li>
+                <li>Documented findings with detailed replication steps and coordinated with dev teams for fixes.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="terminal-window">
+        <div class="window-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <span style="margin-left: 15px;">root@abhilash:~/arsenal</span>
+        </div>
+        <div class="content">
+            <p><span class="prompt">root@abhilash:~/arsenal#</span> <span class="command">ls -la --modules</span></p>
+            
+            <div class="grid">
+                <div class="skill-card">
+                    <strong style="color: var(--accent)">> AD EXPLOITATION</strong><br>
+                    Kerberoasting, AS-REP Roasting, Pass-the-Ticket, Golden Ticket, DCSync.
+                </div>
+                <div class="skill-card">
+                    <strong style="color: var(--accent)">> OFFENSIVE TOOLS</strong><br>
+                    Mimikatz, BloodHound, CrackMapExec, Impacket, Sysinternals.
+                </div>
+                <div class="skill-card">
+                    <strong style="color: var(--accent)">> WEB & API SEC</strong><br>
+                    Burp Suite Pro, Postman, SQLMap, OWASP API Top 10, GraphQL Security.
+                </div>
+                <div class="skill-card">
+                    <strong style="color: var(--accent)">> SCRIPTING</strong><br>
+                    Python, PowerShell, Bash, C/C# (AV Evasion).
+                </div>
+                <div class="skill-card">
+                    <strong style="color: var(--accent)">> NETWORK SEC</strong><br>
+                    TCP/IP, OSI Model, IDS/IPS, Firewalls, Wireshark.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal-window">
+        <div class="window-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <span style="margin-left: 15px;">root@abhilash:~/credentials</span>
+        </div>
+        <div class="content">
+            <p><span class="prompt">root@abhilash:~/credentials#</span> <span class="command">cat certs.db</span></p>
+            
+            <div style="margin-bottom: 15px;">
+                <span style="color: var(--primary-glow)">★ OSCP</span> (Offensive Security Certified Professional) - <span style="font-size: 0.8rem">Dec 2025</span>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <span style="color: var(--primary-glow)">★ CEH Practical</span> (Certified Ethical Hacker) - <span style="font-size: 0.8rem">Nov 2022</span>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <span style="color: var(--primary-glow)">★ FILL this later - <span style="font-size: 0.8rem">Mar 2021</span>
+            </div>
+
+            <br>
+            <p><span class="prompt">root@aayush:~/credentials#</span> <span class="command">cat education.db</span></p>
+            <ul>
+                <li>Bachelor's in Computer Applications - Marwadi University (8.13 CGPA) [May 2021]</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px; font-size: 0.8rem; opacity: 0.7;">
+        System Status: ONLINE <span class="cursor"></span><br>
+        &copy; 2025 Abhilash Christopher. Built for the Void.
+    </div>
+
+</div>
 
 <script>
-(function () {
-  // MATRIX BACKGROUND (same idea as before, but not too bright)
-  const canvas = document.getElementById("matrix-bg");
-  const ctx = canvas.getContext("2d");
-  const characters = "アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const fontSize = 16;
-  let columns, drops;
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    columns = Math.floor(canvas.width / fontSize);
-    drops = Array(columns).fill(0);
-  }
+    // Make canvas full screen
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-  function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#16ff60";
-    ctx.font = fontSize + "px monospace";
+    // Characters to rain down (Cyber style)
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*';
+    const drops = [];
+    const fontSize = 15;
+    const columns = canvas.width / fontSize;
 
-    for (let i = 0; i < columns; i++) {
-      const char = characters.charAt(Math.floor(Math.random() * characters.length));
-      const x = i * fontSize;
-      const y = drops[i] * fontSize;
-      ctx.fillText(char, x, y);
-
-      if (y > canvas.height && Math.random() > 0.975) {
-        drops[i] = 0;
-      } else {
-        drops[i]++;
-      }
+    // Initialize drops
+    for(let x = 0; x < columns; x++) {
+        drops[x] = 1;
     }
 
-    requestAnimationFrame(draw);
-  }
+    function draw() {
+        // Black BG with opacity for trail effect
+        ctx.fillStyle = 'rgba(5, 2, 10, 0.05)'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  window.addEventListener("resize", resizeCanvas);
-  resizeCanvas();
-  draw();
-})();
+        // Text Color (Neon Purple to match your theme)
+        ctx.fillStyle = '#bd00ff'; 
+        ctx.font = fontSize + 'px monospace';
+
+        for(let i = 0; i < drops.length; i++) {
+            const text = chars.charAt(Math.floor(Math.random() * chars.length));
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+            // Randomly reset drop to top
+            if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                drops[i] = 0;
+            }
+            drops[i]++;
+        }
+    }
+    
+    // Animate
+    setInterval(draw, 33);
 </script>
 
 </body>
